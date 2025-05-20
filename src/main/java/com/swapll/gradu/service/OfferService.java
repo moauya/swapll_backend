@@ -79,16 +79,43 @@ public class OfferService {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
         User owner = userDetails.getUser();
-        if(offerRepository.existsByOwner_IdAndId(owner.getId(),offerDTO.getId())){
-            Category category=categoryRepository.findById(offerDTO.getCategoryId()).orElse(null);
-            Offer offer=OfferMapper.toEntity(offerDTO,category);
-            offerRepository.save(offer);
-            return OfferMapper.toDTO(offer);
+
+        Offer existingOffer = offerRepository.findById(offerDTO.getId())
+                .orElseThrow(() -> new NoSuchElementException("Offer not found"));
+
+        if (!existingOffer.getOwner().getId().equals(owner.getId())) {
+            throw new SecurityException("You are not authorized to update this offer");
         }
-        return offerDTO;
 
 
+        if (offerDTO.getTitle() != null)
+            existingOffer.setTitle(offerDTO.getTitle());
+        if (offerDTO.getDescription() != null)
+            existingOffer.setDescription(offerDTO.getDescription());
+        if (offerDTO.getPrice() != 0)
+            existingOffer.setPrice(offerDTO.getPrice());
+        if (offerDTO.getDeliveryTime() != 0)
+            existingOffer.setDeliveryTime(offerDTO.getDeliveryTime());
+        if (offerDTO.getPaymentMethod() != null)
+            existingOffer.setPaymentMethod(offerDTO.getPaymentMethod());
+        if (offerDTO.getStatus() != null)
+            existingOffer.setStatus(offerDTO.getStatus());
+        if (offerDTO.getType() != null)
+            existingOffer.setType(offerDTO.getType());
+        if (offerDTO.getImage() != null)
+            existingOffer.setImage(offerDTO.getImage());
+
+        existingOffer.setAllowSwap(offerDTO.isAllowSwap());
+
+        if (offerDTO.getCategoryId() != 0) {
+            Category category = categoryRepository.findById(offerDTO.getCategoryId())
+                    .orElseThrow(() -> new NoSuchElementException("Category not found"));
+            existingOffer.setCategory(category);
+        }
+
+        return OfferMapper.toDTO(offerRepository.save(existingOffer));
     }
+
 
 
     public OfferDTO getOfferById(int id) {

@@ -4,12 +4,12 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
 @Setter
-public class Message {
+public class Chat {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -18,11 +18,10 @@ public class Message {
     private User sender;
 
     @ManyToOne
-    private Chat chat;
+    private User receiver;
 
-    private String content;
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Message> messages;
 
-    private LocalDateTime timestamp;
-
-
+    // Getters and Setters
 }

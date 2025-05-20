@@ -52,8 +52,9 @@ public class User {
     @Column(name = "address")
     private String address;
 
-    @Column(name = "profile_url")
-    private String profilePic;
+    @Lob
+    @Column(name = "profile_pic", columnDefinition = "LONGBLOB")
+    private byte[] profilePic;
 
     @Column(name = "my_referral_code")
     private String myReferralCode;
@@ -76,11 +77,7 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
     private List<Review> reviews = new ArrayList<>();
 
-    @OneToMany(mappedBy = "sender", fetch = FetchType.LAZY)
-    private List<Message> sentMessages = new ArrayList<>();
 
-    @OneToMany(mappedBy = "recipient", fetch = FetchType.LAZY)
-    private List<Message> receivedMessages = new ArrayList<>();
 
     public User() {
 
@@ -108,11 +105,5 @@ public class User {
         transaction.setSeller(this);
     }
 
-    public void addSentMessage(Message message) {
-        sentMessages.add(message);
-    }
 
-    public void addReceivedMessage(Message message) {
-        receivedMessages.add(message);
-    }
 }

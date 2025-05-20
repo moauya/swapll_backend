@@ -3,35 +3,42 @@ package com.swapll.gradu.model.dto.mappers;
 import com.swapll.gradu.model.User;
 import com.swapll.gradu.model.dto.UserDTO;
 
+import java.util.Base64;
+
 public class UserMapper {
 
+    public static User toEntity(UserDTO dto) {
+        User user = new User();
+        user.setUserName(dto.getUserName());
+        user.setFirstName(dto.getFirstName());
+        user.setLastName(dto.getLastName());
+        user.setEmail(dto.getEmail());
+        user.setPhone(dto.getPhone());
+        user.setAddress(dto.getAddress());
+        user.setReferralCode(dto.getReferralCode());
+        user.setPassword(dto.getPassword());
 
-    public static UserDTO toDTO(User user) {
-        return new UserDTO(
-                user.getUserName(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail(),
-                user.getPhone(),
-                user.getAddress(),
-                user.getProfilePic(),
-                user.getReferralCode()
-        );
+        if (dto.getProfilePic() != null) {
+            user.setProfilePic(Base64.getDecoder().decode(dto.getProfilePic()));
+        }
+
+        return user;
     }
 
+    public static UserDTO toDTO(User user) {
+        UserDTO dto = new UserDTO();
+        dto.setUserName(user.getUserName());
+        dto.setFirstName(user.getFirstName());
+        dto.setLastName(user.getLastName());
+        dto.setEmail(user.getEmail());
+        dto.setPhone(user.getPhone());
+        dto.setAddress(user.getAddress());
+        dto.setReferralCode(user.getReferralCode());
 
+        if (user.getProfilePic() != null) {
+            dto.setProfilePic(Base64.getEncoder().encodeToString(user.getProfilePic()));
+        }
 
-    public static User toEntity(UserDTO userDTO) {
-        User user = new User();
-
-        user.setUserName(userDTO.getUserName());
-        user.setFirstName(userDTO.getFirstName());
-        user.setLastName(userDTO.getLastName());
-        user.setEmail(userDTO.getEmail());
-        user.setPhone(userDTO.getPhone());
-        user.setAddress(userDTO.getAddress());
-        user.setProfilePic(userDTO.getProfilePic());
-        user.setReferralCode(userDTO.getReferralCode());
-        return user;
+        return dto;
     }
 }

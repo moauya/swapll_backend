@@ -42,7 +42,8 @@ public class Offer {
     @NotNull
     private int price;
 
-    @Column(name="offer_img")
+    @Lob
+    @Column(name="offer_img", columnDefinition = "TEXT")
     private String image;
 
     @Column(name = "delivery_time")
