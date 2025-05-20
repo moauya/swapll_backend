@@ -16,10 +16,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -36,16 +34,13 @@ public class AuthController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<RegisterResponse> register(@RequestBody UserDTO userDTO) {
-
-
-        UserDTO registeredUser = userService.registerUser(userDTO);
-
-
+    public ResponseEntity<RegisterResponse> register(@RequestPart("user") UserDTO userDTO,
+                                                     @RequestPart(value = "profilePic", required = false) MultipartFile profilePic) {
+        UserDTO registeredUser = userService.registerUser(userDTO, profilePic);
         String token = jwtUtil.generateToken(new CustomUserDetails(UserMapper.toEntity(registeredUser)));
-
-        return  ResponseEntity.status(HttpStatus.CREATED).body(new RegisterResponse(token, registeredUser));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new RegisterResponse(token, registeredUser));
     }
+
 
 
     @PostMapping("/login")

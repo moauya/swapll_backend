@@ -15,12 +15,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.io.IOException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,23 +38,26 @@ public class OfferService {
     }
 
 
-    public OfferDTO addOffer(OfferDTO offer){
+    public OfferDTO addOffer(OfferDTO dto, MultipartFile image) throws IOException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
         User owner = userDetails.getUser();
-        Category category = categoryRepository.findById(offer.getCategoryId())
-                .orElseThrow(() ->  new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
 
+        Category category = categoryRepository.findById(dto.getCategoryId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
 
+        Offer offer = OfferMapper.toEntity(dto, category);
+        offer.setOwner(owner);
+        owner.addOffer(offer);
+        category.addOffer(offer);
 
-        Offer newOffer=OfferMapper.toEntity(offer,category);
-        newOffer.setOwner(owner);
-        owner.addOffer(newOffer);
-        category.addOffer(newOffer);
+        if (image != null && !image.isEmpty()) {
+            offer.setImage(Base64.getEncoder().encodeToString(image.getBytes()));
+        }
 
-       return OfferMapper.toDTO(offerRepository.save(newOffer));
-
+        return OfferMapper.toDTO(offerRepository.save(offer));
     }
+
     public List<OfferDTO> getAllOffersByCategoryId(int categoryId) {
         List<Offer> offers = offerRepository.findByCategoryId(categoryId);
         if (offers.isEmpty()) {
@@ -75,46 +77,48 @@ public class OfferService {
                 .collect(Collectors.toList());
     }
 
-    public OfferDTO updateOffer(OfferDTO offerDTO){
+    public OfferDTO updateOffer(OfferDTO dto, MultipartFile image) throws IOException {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
         User owner = userDetails.getUser();
 
-        Offer existingOffer = offerRepository.findById(offerDTO.getId())
+        Offer offer = offerRepository.findById(dto.getId())
                 .orElseThrow(() -> new NoSuchElementException("Offer not found"));
 
-        if (!existingOffer.getOwner().getId().equals(owner.getId())) {
+        if (!offer.getOwner().getId().equals(owner.getId())) {
             throw new SecurityException("You are not authorized to update this offer");
         }
 
+        if (dto.getTitle() != null)
+            offer.setTitle(dto.getTitle());
+        if (dto.getDescription() != null)
+            offer.setDescription(dto.getDescription());
+        if (dto.getPrice() != 0)
+            offer.setPrice(dto.getPrice());
+        if (dto.getDeliveryTime() != 0)
+            offer.setDeliveryTime(dto.getDeliveryTime());
+        if (dto.getPaymentMethod() != null)
+            offer.setPaymentMethod(dto.getPaymentMethod());
+        if (dto.getStatus() != null)
+            offer.setStatus(dto.getStatus());
+        if (dto.getType() != null)
+            offer.setType(dto.getType());
 
-        if (offerDTO.getTitle() != null)
-            existingOffer.setTitle(offerDTO.getTitle());
-        if (offerDTO.getDescription() != null)
-            existingOffer.setDescription(offerDTO.getDescription());
-        if (offerDTO.getPrice() != 0)
-            existingOffer.setPrice(offerDTO.getPrice());
-        if (offerDTO.getDeliveryTime() != 0)
-            existingOffer.setDeliveryTime(offerDTO.getDeliveryTime());
-        if (offerDTO.getPaymentMethod() != null)
-            existingOffer.setPaymentMethod(offerDTO.getPaymentMethod());
-        if (offerDTO.getStatus() != null)
-            existingOffer.setStatus(offerDTO.getStatus());
-        if (offerDTO.getType() != null)
-            existingOffer.setType(offerDTO.getType());
-        if (offerDTO.getImage() != null)
-            existingOffer.setImage(offerDTO.getImage());
+        offer.setAllowSwap(dto.isAllowSwap());
 
-        existingOffer.setAllowSwap(offerDTO.isAllowSwap());
-
-        if (offerDTO.getCategoryId() != 0) {
-            Category category = categoryRepository.findById(offerDTO.getCategoryId())
+        if (dto.getCategoryId() != 0) {
+            Category category = categoryRepository.findById(dto.getCategoryId())
                     .orElseThrow(() -> new NoSuchElementException("Category not found"));
-            existingOffer.setCategory(category);
+            offer.setCategory(category);
         }
 
-        return OfferMapper.toDTO(offerRepository.save(existingOffer));
+        if (image != null && !image.isEmpty()) {
+            offer.setImage(Base64.getEncoder().encodeToString(image.getBytes()));
+        }
+
+        return OfferMapper.toDTO(offerRepository.save(offer));
     }
+
 
 
 

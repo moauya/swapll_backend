@@ -5,7 +5,9 @@ import com.swapll.gradu.model.dto.OfferDTO;
 import com.swapll.gradu.service.OfferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -17,11 +19,12 @@ public class OfferController {
 
 
 
-    @PostMapping("/offer")
-    public OfferDTO addOffer(@RequestBody OfferDTO offerDTO) {
-
-        return offerService.addOffer(offerDTO);
+    @PostMapping("/add")
+    public OfferDTO addOffer(@RequestPart("offer") OfferDTO offerDTO,
+                             @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
+        return offerService.addOffer(offerDTO, image);
     }
+
 
     @GetMapping("/offers/category/{categoryId}")
     public List<OfferDTO> getOffersByCategoryId(@PathVariable int categoryId) {
@@ -31,12 +34,12 @@ public class OfferController {
     public List<OfferDTO> getOffersByUserId(@PathVariable int userId) {
        return offerService.getAllOffersByUserId(userId);
     }
-    @PutMapping("/offer")
-    public OfferDTO updateOffer(@RequestBody OfferDTO offerDTO){
-
-        return offerService.updateOffer(offerDTO);
-
+    @PutMapping("/update")
+    public OfferDTO updateOffer(@RequestPart("offer") OfferDTO offerDTO,
+                                @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
+        return offerService.updateOffer(offerDTO, image);
     }
+
     @GetMapping("/offer/{id}")
     public OfferDTO getOfferById(@PathVariable int id) {
         return offerService.getOfferById(id);

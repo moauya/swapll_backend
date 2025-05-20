@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequestMapping("/api")
 @RestController
@@ -31,11 +32,14 @@ public class UserController {
 
         return userService.getUserById(userId);
      }
-     @PutMapping("user")
-     public UserDTO updateUser(@RequestBody UserDTO userDTO){
+     @PutMapping("/user")
+     public UserDTO updateUser(
+             @RequestPart("user") UserDTO userDTO,
+             @RequestPart(value = "profilePic", required = false) MultipartFile profilePic) {
 
-          return userService.updateUser(userDTO);
+          return userService.updateUser(userDTO, profilePic);
      }
+
 
      @PostMapping("/user/change-password")
      public ResponseEntity<String> changePassword(
@@ -44,6 +48,12 @@ public class UserController {
 
           userService.changePassword(oldPassword, newPassword);
           return ResponseEntity.ok("Password changed successfully");
+     }
+
+     @GetMapping("/user/myinfo")
+     public UserDTO getUserInfo(){
+
+        return  userService.getUserInfo();
      }
 
 
