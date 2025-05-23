@@ -1,5 +1,7 @@
 package com.swapll.gradu.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swapll.gradu.model.User;
 import com.swapll.gradu.model.dto.*;
 import com.swapll.gradu.model.dto.login.LoginRequest;
@@ -11,6 +13,7 @@ import com.swapll.gradu.security.JwtUtil;
 import com.swapll.gradu.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -33,12 +36,18 @@ public class AuthController {
     private JwtUtil jwtUtil;
 
 
-    @PostMapping("/register")
-    public ResponseEntity<RegisterResponse> register(@RequestPart("user") UserDTO userDTO,
-                                                     @RequestPart(value = "profilePic", required = false) MultipartFile profilePic) {
+    @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<RegisterResponse> register(@RequestPart("user") String userJson,
+                                                     @RequestPart(value = "profilePic", required = false) MultipartFile profilePic) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        UserDTO userDTO = mapper.readValue(userJson, UserDTO.class);
+
         UserDTO registeredUser = userService.registerUser(userDTO, profilePic);
+
         String token = jwtUtil.generateToken(new CustomUserDetails(UserMapper.toEntity(registeredUser)));
-        return ResponseEntity.status(HttpStatus.CREATED).body(new RegisterResponse(token, registeredUser));
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(new RegisterResponse(token, registeredUser));
     }
 
 
