@@ -139,4 +139,11 @@ public class UserService {
 
         return dto;
     }
+
+    public byte[] getUserProfilePic(Integer id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return user.getProfilePic();
+    }
 }

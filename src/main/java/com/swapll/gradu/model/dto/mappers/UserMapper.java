@@ -18,9 +18,9 @@ public class UserMapper {
         user.setReferralCode(dto.getReferralCode());
         user.setPassword(dto.getPassword());
 
-        if (dto.getProfilePic() != null) {
-            user.setProfilePic(Base64.getDecoder().decode(dto.getProfilePic()));
-        }
+//        if (dto.getProfilePic() != null) {
+//            user.setProfilePic(Base64.getDecoder().decode(dto.getProfilePic()));
+//        }
 
         return user;
     }
@@ -35,8 +35,11 @@ public class UserMapper {
         dto.setAddress(user.getAddress());
         dto.setReferralCode(user.getReferralCode());
 
-        if (user.getProfilePic() != null) {
-            dto.setProfilePic(Base64.getEncoder().encodeToString(user.getProfilePic()));
+        if (user.getId() != null && user.getProfilePic() != null) {
+            dto.setProfilePic("/api/users/" + user.getId() + "/profile-pic");
+        }
+        else{
+            dto.setProfilePic(null);
         }
 
         return dto;

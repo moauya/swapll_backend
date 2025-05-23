@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDTO {
 
+public class UserDTO {
     private String userName;
     private String firstName;
     private String lastName;
@@ -18,8 +18,9 @@ public class UserDTO {
     private String email;
     private String phone;
     private String address;
-    private String profilePic;
     private String referralCode;
+    private String profilePic; // This will be a URL (not the image bytes)
+
 
     public UserDTO(String userName, String firstName, String lastName, String email, String phone, String address, String profilePic, String referralCode) {
         this.userName = userName;

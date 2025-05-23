@@ -39,6 +39,8 @@ public class AuthController {
     @PostMapping(value = "/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<RegisterResponse> register(@RequestPart("user") String userJson,
                                                      @RequestPart(value = "profilePic", required = false) MultipartFile profilePic) throws JsonProcessingException {
+
+        // by yazan
         ObjectMapper mapper = new ObjectMapper();
         UserDTO userDTO = mapper.readValue(userJson, UserDTO.class);
 

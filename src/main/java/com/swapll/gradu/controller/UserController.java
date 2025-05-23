@@ -8,6 +8,7 @@ import com.swapll.gradu.security.CustomUserDetails;
 import com.swapll.gradu.service.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -56,13 +57,20 @@ public class UserController {
         return  userService.getUserInfo();
      }
 
+     @GetMapping("/users/{id}/profile-pic")
+     public ResponseEntity<byte[]> getProfilePic(@PathVariable Integer id){
+          byte[] image = userService.getUserProfilePic(id);
+          if (image == null || image.length == 0) {
+               return ResponseEntity.notFound().build();
+          }
+
+          return ResponseEntity.ok()
+                  .contentType(MediaType.IMAGE_JPEG)
+                  .body(image);
+     }
+     }
 
 
-
-
-
-
-}
 
 
 
