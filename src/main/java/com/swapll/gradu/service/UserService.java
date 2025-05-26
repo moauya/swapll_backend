@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Base64;
 
@@ -146,4 +147,15 @@ public class UserService {
 
         return user.getProfilePic();
     }
+
+    public String getUserNameByRefCode(String refCode){
+        Optional<User> user=userRepository.findByMyReferralCode(refCode);
+        if (user.isPresent()){
+            return user.get().getUserName();
+        }
+
+        return "No User Have This referral Code";
+
+    }
+
 }

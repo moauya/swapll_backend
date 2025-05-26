@@ -65,6 +65,9 @@ public class User {
     @Column(name = "referral_code")
     private String referralCode;
 
+    @Column(name = "bio")
+    private String bio;
+
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Offer> offers = new ArrayList<>();
 

@@ -16,4 +16,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     Optional<User> findByMyReferralCode(String myReferralCode);
     Optional<User> findByUserNameOrEmailIgnoreCase(String username, String email);
 
+
+
 }

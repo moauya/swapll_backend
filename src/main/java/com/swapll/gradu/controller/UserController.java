@@ -1,6 +1,8 @@
 package com.swapll.gradu.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.swapll.gradu.model.User;
 
 import com.swapll.gradu.model.dto.UserDTO;
@@ -33,13 +35,19 @@ public class UserController {
 
         return userService.getUserById(userId);
      }
-     @PutMapping("/user")
+
+     @PutMapping(value = "/user", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
      public UserDTO updateUser(
-             @RequestPart("user") UserDTO userDTO,
-             @RequestPart(value = "profilePic", required = false) MultipartFile profilePic) {
+             @RequestPart("user") String userJson,
+             @RequestPart(value = "profilePic", required = false) MultipartFile profilePic
+     ) throws JsonProcessingException {
+
+          ObjectMapper mapper = new ObjectMapper();
+          UserDTO userDTO = mapper.readValue(userJson, UserDTO.class);
 
           return userService.updateUser(userDTO, profilePic);
      }
+
 
 
      @PostMapping("/user/change-password")
@@ -68,6 +76,14 @@ public class UserController {
                   .contentType(MediaType.IMAGE_JPEG)
                   .body(image);
      }
+     @GetMapping("/user/ref")
+     public String getUserNameByRefCode(@RequestBody String refCode){
+
+          return userService.getUserNameByRefCode(refCode);
+     }
+
+
+
      }
 
 
