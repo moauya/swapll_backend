@@ -36,7 +36,8 @@ public class UserMapper {
         dto.setReferralCode(user.getReferralCode());
 
         if (user.getId() != null && user.getProfilePic() != null) {
-            dto.setProfilePic("/api/users/" + user.getId() + "/profile-pic");
+            dto.setProfilePic("http://localhost:8080/api/users/" + user.getId() + "/profile-pic");
+
         }
         else{
             dto.setProfilePic(null);
