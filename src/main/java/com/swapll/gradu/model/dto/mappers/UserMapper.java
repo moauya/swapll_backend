@@ -19,9 +19,9 @@ public class UserMapper {
         user.setReferralCode(dto.getReferralCode());
         user.setPassword(dto.getPassword());
 
-        if (dto.getProfilePic() != null) {
-            user.setProfilePic(Base64.getDecoder().decode(dto.getProfilePic()));
-        }
+//        if (dto.getProfilePic() != null) {
+//            user.setProfilePic(Base64.getDecoder().decode(dto.getProfilePic()));
+//        }
 
         return user;
     }
