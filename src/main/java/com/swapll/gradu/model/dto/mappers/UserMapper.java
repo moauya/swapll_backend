@@ -10,6 +10,7 @@ public class UserMapper {
     public static User toEntity(UserDTO dto) {
         User user = new User();
         user.setUserName(dto.getUserName());
+        user.setBio(dto.getBio());
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
         user.setEmail(dto.getEmail());
@@ -17,6 +18,7 @@ public class UserMapper {
         user.setAddress(dto.getAddress());
         user.setReferralCode(dto.getReferralCode());
         user.setPassword(dto.getPassword());
+
 
 //        if (dto.getProfilePic() != null) {
 //            user.setProfilePic(Base64.getDecoder().decode(dto.getProfilePic()));
@@ -27,6 +29,7 @@ public class UserMapper {
 
     public static UserDTO toDTO(User user) {
         UserDTO dto = new UserDTO();
+        dto.setId(user.getId());
         dto.setUserName(user.getUserName());
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
@@ -34,9 +37,11 @@ public class UserMapper {
         dto.setPhone(user.getPhone());
         dto.setAddress(user.getAddress());
         dto.setReferralCode(user.getReferralCode());
+        dto.setMyReferralCode(user.getMyReferralCode());
+        dto.setBio(user.getBio());
 
         if (user.getId() != null && user.getProfilePic() != null) {
-            dto.setProfilePic("http://localhost:8080/api/users/" + user.getId() + "/profile-pic");
+            dto.setProfilePic("/api/users/" + user.getId() + "/profile-pic");
 
         }
         else{

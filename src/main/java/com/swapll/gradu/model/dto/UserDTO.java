@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 
 public class UserDTO {
+    private Integer id;
     private String userName;
     private String firstName;
     private String lastName;
@@ -18,11 +19,13 @@ public class UserDTO {
     private String email;
     private String phone;
     private String address;
+    private String bio;
+    private String myReferralCode;
     private String referralCode;
     private String profilePic; // This will be a URL (not the image bytes)
 
 
-    public UserDTO(String userName, String firstName, String lastName, String email, String phone, String address, String profilePic, String referralCode) {
+    public UserDTO(Integer id,String userName, String firstName, String lastName, String email, String phone, String address, String profilePic, String referralCode,String myReferralCode,String bio) {
         this.userName = userName;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -31,6 +34,9 @@ public class UserDTO {
         this.address = address;
         this.profilePic = profilePic;
         this.referralCode = referralCode;
+        this.id=id;
+        this.bio=bio;
+        this.myReferralCode=myReferralCode;
     }
 
 }

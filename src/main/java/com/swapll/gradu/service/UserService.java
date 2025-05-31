@@ -92,6 +92,7 @@ public class UserService {
         if (updatedUserDTO.getPhone() != null) owner.setPhone(updatedUserDTO.getPhone());
         if (updatedUserDTO.getAddress() != null) owner.setAddress(updatedUserDTO.getAddress());
         if (updatedUserDTO.getReferralCode() != null) owner.setReferralCode(updatedUserDTO.getReferralCode());
+        if (updatedUserDTO.getBio() != null) owner.setBio(updatedUserDTO.getBio());
 
         if (profilePic != null && !profilePic.isEmpty()) {
             try {
@@ -145,5 +146,13 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         return user.getProfilePic();
+    }
+
+    public String getUserNameByRefCode(String ref){
+        Optional<User> user=userRepository.findByMyReferralCode(ref);
+        if(user.isPresent()){
+            return user.get().getUserName();
+        }
+        return "there is no user have this refferal";
     }
 }

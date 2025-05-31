@@ -52,6 +52,9 @@ public class User {
     @Column(name = "address")
     private String address;
 
+    @Column(name = "bio")
+    private String bio;
+
     @Lob
     @Column(name = "profile_pic", columnDefinition = "LONGBLOB")
     private byte[] profilePic;
